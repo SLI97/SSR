@@ -1,68 +1,76 @@
-const Vue = require('vue')
-const app = require('express')()
-// const createApp = require('./app')
-const renderer = require('vue-server-renderer').createRenderer()
+const fs = require("fs");
+const path = require("path");
+const express = require('express')
+const app = express()
 
-// const template = require('fs').readFileSync('./index.template.html', 'utf-8');
-// const renderer = require('vue-server-renderer').createRenderer({
-//     template,
-// });
+// 第 2 步：获得一个createBundleRenderer
+const { createBundleRenderer } = require("vue-server-renderer");
+const serverBundle = require("./dist/server/vue-ssr-server-bundle.json");
+const clientManifest = require("./dist/client/vue-ssr-client-manifest.json");
 
-// const context = {
-//     title: 'vue ssr',
-//     meta: `
-//         <meta name="keyword" content="vue,ssr">
-//         <meta name="description" content="vue srr demo">
-//     `,
-// };
+const renderer = createBundleRenderer(serverBundle, {
+  runInNewContext: false,
+  template: fs.readFileSync(path.resolve(__dirname, "./src/index.template.html"), "utf-8"),
+  clientManifest,
+});
 
+function renderToString(context) {
+  return new Promise((resolve, reject) => {
+    renderer.renderToString(context, (err, html) => {
+      err ? reject(err) : resolve(html);
+    });
+  });
+}
 
-// app.get('*', (req, res) => {
-//     const context = { url: req.url }
-//     const app = createApp(context)
-//     // res.writeHead(200, { 'Content-Type': 'application/json;charset=utf-8' });
-//     res.writeHead(200, { 'Content-Type': 'text/html;charset=utf-8' });
+app.use('/js', express.static('./dist/client/js'));
+app.use('/css', express.static('./dist/client/css'));
 
-//     // const app = new Vue({
-//     //     data: {
-//     //         url: req.url
-//     //     },
-//     //     template: `<div>访问的 URL 是： {{ url }}</div>`
-//     // })
-
-//     renderer.renderToString(app, context, (err, html) => {
-//         if (err) {
-//             console.log(err)
-//             res.status(500).end('Internal Server Error')
-//             return
-//         }
-//         res.end(html);
-//     })
-// })
-
-const createApp = require('/path/to/built-server-bundle.js')
-
-app.get('*', (req, res) => {
-  const context = { url: req.url }
-
-  createApp(context).then(app => {
-    renderer.renderToString(app, (err, html) => {
-      if (err) {
-        if (err.code === 404) {
-          res.status(404).end('Page not found')
-        } else {
-          res.status(500).end('Internal Server Error')
-        }
-      } else {
-        res.end(html)
-      }
-    })
-  })
+app.get('/api/:id', (req, res) => {
+  const { id } = req.params
+  const result = {
+    code: 200,
+    data: id,
+    msg: '请求成功'
+  }
+  res.setHeader("Content-Type", "application/json;charsetutf-8")
+  res.setHeader("Server", "Sli97")
+  res.json(result);
+  res.end()
 })
 
 
-const server = app.listen(8080, () => {
-    const host = server.address().address
-    const port = server.address().port
-    console.log("应用实例，访问地址为 http://%s:%s", host, port)
+app.get('/api1', (req, res) => {
+  console.log(req.params)
+  const { id } = req.params
+  console.log(id)
+  res.setHeader("Content-Type", "application/json;charset:utf-8")
+  res.setHeader("Server", "Sli97")
+  res.send(id)
 })
+
+app.get('*', async (req, res) => {
+  const context = { url: req.url, title: "Hello SSR", }
+
+  // 将 context 数据渲染为 HTML
+  const html = await renderToString(context).catch(err => {
+    if (err.url) {
+      res.redirect(err.url)
+    } else if (err.code === 404) {
+      res.status(404).send('404 | Page Not Found')
+    } else {
+      // Render Error Page or Redirect
+      res.status(500).send('500 | Internal Server Error')
+      console.error(`error during render : ${req.url}`)
+      console.error(err.stack)
+    }
+  });
+
+  res.send(html)
+})
+
+
+/*服务启动*/
+const port = 3000;
+app.listen(port, () => {
+  console.log(`server started at localhost:${port}`);
+});

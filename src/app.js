@@ -1,35 +1,41 @@
-// const Vue = require('vue')
-
-// module.exports = function createApp (context) {
-//   return new Vue({
-//     data: {
-//       url: context.url
-//     },
-//     template: `<div>访问的 URL 是： {{ url }}</div>`
-//   })
-// }
-
 import Vue from 'vue'
 import App from './App.vue'
-import { createRouter } from './router/router'
 import { createStore } from './store'
+import { createRouter } from './router'
 import { sync } from 'vuex-router-sync'
+// import titleMixin from './util/title'
+// import * as filters from './util/filters'
 
+// mixin for handling title
+// Vue.mixin(titleMixin)
+
+// register global utility filters.
+// Object.keys(filters).forEach(key => {
+//   Vue.filter(key, filters[key])
+// })
+
+// Expose a factory function that creates a fresh set of store, router,
+// app instances on each call (which is called for each SSR request)
 export function createApp () {
-  // 创建 router 和 store 实例
-  const router = createRouter()
+  // create store and router instances
   const store = createStore()
+  const router = createRouter()
 
-  // 同步路由状态(route state)到 store
+  // sync the router with the vuex store.
+  // this registers `store.state.route`
   sync(store, router)
 
-  // 创建应用程序实例，将 router 和 store 注入
+  // create the app instance.
+  // here we inject the router, store and ssr context to all child components,
+  // making them available everywhere as `this.$router` and `this.$store`.
   const app = new Vue({
     router,
     store,
     render: h => h(App)
   })
 
-  // 暴露 app, router 和 store。
+  // expose the app, the router and the store.
+  // note we are not mounting the app here, since bootstrapping will be
+  // different depending on whether we are in a browser or on the server.
   return { app, router, store }
 }
