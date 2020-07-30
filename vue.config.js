@@ -8,14 +8,14 @@ const resolve = dir => require('path').join(__dirname, dir)
 
 module.exports = {
     lintOnSave: false,
-    publicPath: "./",
+    publicPath: "/",
     outputDir: `dist/${env.RUN_ENV}`,
     devServer: {
 		port: 3001,
 		publicPath: "/"
 	},
     configureWebpack: {
-        // 将 entry 指向应用程序的 server / client 文件
+        // 将 entry 指向应用程序的 server / client 文件,不写默认是main.js
         entry: `./src/entry-${env.RUN_ENV}.js`,
         devtool: "eval",
         // 这允许 webpack 以 Node 适用方式(Node-appropriate fashion)处理动态导入(dynamic import)，

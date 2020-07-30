@@ -1,3 +1,11 @@
+<!--
+ * @Author: your name
+ * @Date: 2020-07-30 20:54:32
+ * @LastEditTime: 2020-07-30 23:38:05
+ * @LastEditors: Please set LastEditors
+ * @Description: In User Settings Edit
+ * @FilePath: \SSR\src\views\About.vue
+--> 
 <template>
   <div>
     <div class="news-view">About haha~</div>
@@ -8,6 +16,7 @@
 
 <script>
 import { getData } from "@/api/index";
+import { mapGetters, mapState } from "vuex";
 
 export default {
   name: "About",
@@ -15,9 +24,10 @@ export default {
     loading: true,
   }),
   computed: {
-    id() {
-      return this.$store.state.id;
-    },
+    ...mapGetters(["id"]),
+    // id() {
+    //   return this.$store.getters.id;
+    // },
   },
   asyncData({
     store,
@@ -25,8 +35,10 @@ export default {
       params: { id },
     },
   }) {
-    console.log(1123)
-    return store.dispatch("FETCH_DATA", id);
+    return store.dispatch("GET_DATA", id);
+  },
+  mounted() {
+    // console.log(this.$store)
   },
 };
 </script>

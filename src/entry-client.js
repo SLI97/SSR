@@ -9,7 +9,7 @@ document.body.appendChild(bar.$el)
 
 // a global mixin that calls `asyncData` when a route component's params change
 Vue.mixin({
-  beforeRouteUpdate (to, from, next) {
+  beforeRouteUpdate(to, from, next) {
     const { asyncData } = this.$options
     if (asyncData) {
       asyncData({
@@ -18,6 +18,21 @@ Vue.mixin({
       }).then(next).catch(next)
     } else {
       next()
+    }
+  }
+})
+
+Vue.mixin({
+  beforeMount () {
+    const { asyncData } = this.$options
+    if (asyncData) {
+      // 将获取数据操作分配给 promise
+      // 以便在组件中，我们可以在数据准备就绪后
+      // 通过运行 `this.dataPromise.then(...)` 来执行其他任务
+      this.dataPromise = asyncData({
+        store: this.$store,
+        route: this.$route
+      })
     }
   }
 })
@@ -33,6 +48,7 @@ if (window.__INITIAL_STATE__) {
 // wait until router has resolved all async before hooks
 // and async components...
 router.onReady(() => {
+
   // Add router hook for handling asyncData.
   // Doing it after initial route is resolved so that we don't double-fetch
   // the data that we already have. Using router.beforeResolve() so that all

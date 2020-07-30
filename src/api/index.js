@@ -2,8 +2,7 @@ import request from '@/util/request'
 
 export function getData(params) {
   return request({
-    url: '/api',
+    url: '/api/' + params,
     method: 'get',
-    params: params
   })
 }

@@ -2,7 +2,7 @@ import axios from 'axios'
 
 // 创建axios实例
 const service = axios.create({
-    baseURL: 'localhost:3000',
+    baseURL: 'http://localhost:3000',
     timeout: 30000, // 请求超时时间
     // withCredentials: true // 跨域请求，允许保存cookie
 })
