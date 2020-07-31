@@ -3,6 +3,22 @@ import 'es6-promise/auto'
 import {createApp} from './app'
 import ProgressBar from './components/ProgressBar.vue'
 
+//采用服务端渲染
+//www.bilibili.com
+//search.bilibili.com
+//live.bilibili.com
+//game.bilibili.com
+//account.bilibili.com
+
+//客户端渲染
+//space.bilibili.com
+//t.bilibili.com
+//message.bilibili.com
+//member.bilibili.com
+//show.bilibili.com
+//bw.bilibili.com
+//app.bilibili.com
+
 // global progress bar
 const bar = Vue.prototype.$bar = new Vue(ProgressBar).$mount()
 document.body.appendChild(bar.$el)
@@ -17,11 +33,11 @@ if (window.__INITIAL_STATE__) {
 
 //当点击切换路由时：
 // beforeRouterLeave
-// -->beforeEach
-// -->beforeEnter
-// -->beforeRouteEnter
-// -->beforeResolve
-// -->afterEach
+// -->beforeEach  全局路由的前置拦截
+// -->beforeEnter 进入全局钩子
+// -->beforeRouteEnter 进入子组件路由钩子
+// -->beforeResolve   子组件路由解析完成钩子
+// -->afterEach    全局路由的后置拦截
 // -->beforeCreate
 // -->created
 // -->beforeMount
@@ -51,14 +67,14 @@ if (process.env.NODE_ENV === 'development') {
 } else {
 	// wait until router has resolved all async before hooks
 	// and async components...
-	//他会等到他要加载的组件的beforeRouteEnter执行完才会触发，这样就能保证组件路由对象初始化完成
+	//所有的路由前置钩子完成后才会执行
 	router.onReady(() => {
 		console.log("onReady")
 		// Add router hook for handling asyncData.
 		// Doing it after initial route is resolved so that we don't double-fetch
 		// the data that we already have. Using router.beforeResolve() so that all
 		// async components are resolved.
-		//全局路由，当路由被异步解析完成的时候触发
+		//当前路由的异步组件被解析完成时触发
 		router.beforeResolve((to, from, next) => {
 			//在路由导航之前解析数据
 			console.log("beforeResolve")
@@ -92,7 +108,7 @@ if (process.env.NODE_ENV === 'development') {
 //开发环境和生产环境都需要的配置，仅在组件被复用。但是路由发生了改变时触发，如动态路由
 Vue.mixin({
 	beforeRouteUpdate(to, from, next) {
-		console.log("haha")
+		console.log("beforeRouteUpdate")
 		const {asyncData} = this.$options
 		if (asyncData) {
 			asyncData({

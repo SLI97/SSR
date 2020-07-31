@@ -1,3 +1,5 @@
 export default {
-    id: state => state.id,
+	homeData: state => state.homeData,
+	searchData: state => state.searchData,
+	spaceData: state => state.spaceData,
 }

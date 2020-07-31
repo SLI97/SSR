@@ -2,33 +2,31 @@ const VueSSRServerPlugin = require("vue-server-renderer/server-plugin");
 const VueSSRClientPlugin = require("vue-server-renderer/client-plugin");
 const nodeExternals = require("webpack-node-externals");
 const env = process.env;
-const isServer = env.RUN_ENV === "server";
+const isServer = env.WEBPACK_TARGET === "server";
 
 const resolve = dir => require('path').join(__dirname, dir)
 
 module.exports = {
 	lintOnSave: false,
 	publicPath: "/",
-	outputDir: `dist/${env.RUN_ENV}`,
+	outputDir: `dist/${env.WEBPACK_TARGET}`,
 	devServer: {
 		port: 3001,
 		publicPath: "/"
 	},
 	configureWebpack: {
 		// 将 entry 指向应用程序的 server / client 文件,不写默认是main.js
-		entry: `./src/entry-${env.RUN_ENV}.js`,
+		entry: `./src/entry-${env.WEBPACK_TARGET}.js`,
+		// 对 bundle renderer 提供 source map 支持
 		devtool: "eval",
 		// 这允许 webpack 以 Node 适用方式(Node-appropriate fashion)处理动态导入(dynamic import)，
-		// 并且还会在编译 Vue 组件时，
-		// 告知 `vue-loader` 输送面向服务器代码(server-oriented code)。
+		// 并且还会在编译 Vue 组件时，告知 `vue-loader` 输送面向服务器代码(server-oriented code)。
 		target: isServer ? "node" : "web",
 		output: {
+			// 此处告知 server bundle 使用 Node 风格导出模块
 			libraryTarget: isServer ? "commonjs2" : undefined,
 		},
-		// https://webpack.js.org/configuration/externals/#function
-		// https://github.com/liady/webpack-node-externals
-		// 外置化应用程序依赖模块。可以使服务器构建速度更快，
-		// 并生成较小的 bundle 文件。
+		// 外置化应用程序依赖模块。可以使服务器构建速度更快，并生成较小的 bundle 文件。
 		externals: isServer
 			? nodeExternals({
 				// 不要外置化 webpack 需要处理的依赖模块。
@@ -45,12 +43,13 @@ module.exports = {
 		plugins: [isServer ? new VueSSRServerPlugin() : new VueSSRClientPlugin()],
 	},
 	chainWebpack: config => {
+		//增加路径别名
 		config.resolve.alias
 			.set('@', resolve('src'))
 	},
 	css: {
 		loaderOptions: {
-			// 设置 scss 公用变量文件
+			// 设置样式公用变量文件
 			stylus: {}
 		}
 	},

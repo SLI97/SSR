@@ -1,8 +1,13 @@
 import Vue from 'vue'
 
 export default {
-  SET_DATA: (state, id) => {
-    // state.id = id
-    Vue.set(state, "id", id)
-  },
+	SET_HOME_DATA: (state, data) => {
+		Vue.set(state, "homeData", data)
+	},
+	SET_SEARCH_DATA: (state, data) => {
+		Vue.set(state, "searchData", data)
+	},
+	SET_SPACE_DATA: (state, data) => {
+		Vue.set(state, "spaceData", data)
+	}
 }

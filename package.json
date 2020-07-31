@@ -4,11 +4,11 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "serve": "cross-env RUN_ENV=client vue-cli-service serve --mode dev",
-    "serve:prod": "cross-env RUN_ENV=client vue-cli-service serve --mode prod",
+    "serve": "cross-env WEBPACK_TARGET=client vue-cli-service serve --mode dev",
+    "serve:prod": "cross-env WEBPACK_TARGET=client vue-cli-service serve --mode prod",
     "start": "npm run build:server && npm run build:client && npm run server",
-    "build:client": "cross-env RUN_ENV=client vue-cli-service build --mode prod",
-    "build:server": "cross-env RUN_ENV=server vue-cli-service build --mode prod",
+    "build:client": "cross-env WEBPACK_TARGET=client vue-cli-service build --mode prod",
+    "build:server": "cross-env WEBPACK_TARGET=server vue-cli-service build --mode prod",
     "server": "node server",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
