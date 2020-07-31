@@ -28,6 +28,7 @@ export function createApp () {
   // create the app instance.
   // here we inject the router, store and ssr context to all child components,
   // making them available everywhere as `this.$router` and `this.$store`.
+	//当router已经挂载vue上时，他的一堆钩子都不会再触发了，这样会导致第一次进页面时无法触发钩子
   const app = new Vue({
     router,
     store,
