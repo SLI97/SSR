@@ -25,7 +25,7 @@ function renderToString(context) {
 // 中间件处理静态文件请求
 app.use(express.static('./dist/client', {index: false})) // 为false是不让它渲染成dist/client/index.html
 
-app.all('/api', (req, res, next) => {
+app.all('/api/*', (req, res, next) => {
 	res.setHeader('Access-Control-Allow-Origin', '*');
 	res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Content-Length, Authorization, Accept, X-Requested-With , yourHeaderFeild');
 	res.setHeader('Access-Control-Allow-Methods', 'PUT, POST, GET, DELETE, OPTIONS');
