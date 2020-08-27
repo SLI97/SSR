@@ -1,6 +1,6 @@
 import Vue from 'vue'
 import 'es6-promise/auto'
-import {createApp} from './app'
+import { createApp } from './app'
 import ProgressBar from './components/ProgressBar.vue'
 
 //采用服务端渲染
@@ -23,7 +23,7 @@ import ProgressBar from './components/ProgressBar.vue'
 const bar = Vue.prototype.$bar = new Vue(ProgressBar).$mount()
 document.body.appendChild(bar.$el)
 
-const {app, router, store} = createApp()
+const { app, router, store } = createApp()
 
 // prime the store with server-initialized state.
 // the state is determined during SSR and inlined in the page markup.
@@ -51,7 +51,7 @@ if (process.env.NODE_ENV === 'development') {
 	//他会为所有的组件都加上这个方法，包括第三方或者内置组件，不过测试环境无所谓了
 	Vue.mixin({
 		beforeMount() {
-			const {asyncData} = this.$options
+			const { asyncData } = this.$options
 			if (asyncData) {
 				console.log("beforeMount-asyncData")
 				// 将获取数据操作分配给 promise
@@ -90,7 +90,7 @@ if (process.env.NODE_ENV === 'development') {
 			}
 
 			bar.start()
-			Promise.all(asyncDataHooks.map(hook => hook({store, route: to})))
+			Promise.all(asyncDataHooks.map(hook => hook({ store, route: to })))
 				.then(() => {
 					bar.finish()
 					next()
@@ -109,7 +109,7 @@ if (process.env.NODE_ENV === 'development') {
 Vue.mixin({
 	beforeRouteUpdate(to, from, next) {
 		console.log("beforeRouteUpdate")
-		const {asyncData} = this.$options
+		const { asyncData } = this.$options
 		if (asyncData) {
 			asyncData({
 				store: this.$store,

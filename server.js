@@ -3,7 +3,7 @@ const path = require("path");
 const express = require('express')
 const app = express()
 
-const {createBundleRenderer} = require("vue-server-renderer");
+const { createBundleRenderer } = require("vue-server-renderer");
 const serverBundle = require("./dist/server/vue-ssr-server-bundle.json");
 const clientManifest = require("./dist/client/vue-ssr-client-manifest.json");
 
@@ -23,7 +23,7 @@ function renderToString(context) {
 }
 
 // 中间件处理静态文件请求
-app.use(express.static('./dist/client', {index: false})) // 为false是不让它渲染成dist/client/index.html
+app.use(express.static('./dist/client', { index: false })) // 为false是不让它渲染成dist/client/index.html
 
 app.all('/api/*', (req, res, next) => {
 	res.setHeader('Access-Control-Allow-Origin', '*');
@@ -45,7 +45,7 @@ app.get('/api/home', (req, res) => {
 })
 
 app.get('/api/search/:id', (req, res) => {
-	const {id} = req.params
+	const { id } = req.params
 	const result = {
 		code: 200,
 		data: id,
@@ -67,8 +67,8 @@ app.post('/api/space', (req, res) => {
 
 //需要开启服务端渲染的时候，打开
 app.get('*', async (req, res) => {
-	const context = {url: req.url, title: "Hello SSR",}
-	if(req.url === 'space'){
+	const context = { url: req.url, title: "Hello SSR", }
+	if (req.url === 'space') {
 
 	}
 
